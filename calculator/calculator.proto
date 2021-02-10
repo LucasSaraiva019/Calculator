@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+
+package calculator;
+
+message Request {
+  float numberOne = 1;
+  float numberTwo = 2;
+  OperatorType operation = 3;
+}
+
+enum OperatorType {
+  SUM = 0;
+  SUBTRACTION = 1;
+  MULTIPLICATION = 2;
+  DIVISION = 3;
+}
+
+message Response {
+  float result = 1;
+}
+
+service CalculatorService {
+  rpc Calculate(Request) returns (Response) {}
+}
