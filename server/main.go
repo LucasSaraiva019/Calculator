@@ -23,7 +23,6 @@ type Math struct {
 //(c *Math) = Receiver
 //Calculate2 ...
 func (c *Math) Calculate(ctx context.Context, in *pb.Request) (*pb.Response, error) {
-	var errorDivisorZero = errors.New("Não é possivel dividir por Zero")
 	var res float32
 	var err error
 
@@ -36,7 +35,7 @@ func (c *Math) Calculate(ctx context.Context, in *pb.Request) (*pb.Response, err
 		res = in.NumberOne * in.NumberTwo
 	case pb.OperatorType_DIVISION:
 		if in.NumberTwo == 0 {
-			err = errorDivisorZero
+			err = errors.New("Não é possivel dividir por Zero")
 		} else {
 			res = in.NumberOne / in.NumberTwo
 		}

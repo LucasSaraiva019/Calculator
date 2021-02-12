@@ -177,7 +177,7 @@ var _ = Describe("Main", func() {
 				Expect(ComparerFloat(float64(response.Result), 3.45)).To(BeTrue())
 			})
 		})
-		FContext("Operator Div", func() {
+		Context("Operator Div", func() {
 			It("Div with two integer numbers", func() {
 				request := &pb.Request{
 					NumberOne: 4,
@@ -198,16 +198,16 @@ var _ = Describe("Main", func() {
 				Expect(err).To(BeNil())
 				Expect(ComparerFloat(float64(response.Result), 1.95652)).To(BeTrue())
 			})
-			// TODO terminar esse bendito teste
-			FIt("Div with second number is zero numbers", func() {
+			It("Div with second number is zero numbers", func() {
 				request := &pb.Request{
 					NumberOne: 10,
 					NumberTwo: 0,
 					Operation: pb.OperatorType_DIVISION,
 				}
 				response, err := calculator.Calculate(context.Background(), request)
-				Expect(err).To(BeNil())
-				Expect(response.Result).To()
+				Expect(err).NotTo(BeNil())
+				Expect(err.Error()).To(Equal("Não é possivel dividir por Zero"))
+				Expect(response).To(BeNil())
 			})
 			It("Div with two integer negative numbers", func() {
 				request := &pb.Request{
