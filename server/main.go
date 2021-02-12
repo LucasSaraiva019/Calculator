@@ -23,7 +23,10 @@ type Math struct {
 //(c *Math) = Receiver
 //Calculate2 ...
 func (c *Math) Calculate(ctx context.Context, in *pb.Request) (*pb.Response, error) {
+	var errorDivisorZero = errors.New("Não é possivel dividir por Zero")
 	var res float32
+	var err error
+
 	switch in.Operation {
 	case pb.OperatorType_SUM:
 		res = in.NumberOne + in.NumberTwo
@@ -32,9 +35,16 @@ func (c *Math) Calculate(ctx context.Context, in *pb.Request) (*pb.Response, err
 	case pb.OperatorType_MULTIPLICATION:
 		res = in.NumberOne * in.NumberTwo
 	case pb.OperatorType_DIVISION:
-		res = in.NumberOne / in.NumberTwo
+		if in.NumberTwo == 0 {
+			err = errorDivisorZero
+		} else {
+			res = in.NumberOne / in.NumberTwo
+		}
 	default:
 		return &pb.Response{Result: -1}, errors.New("Operador invalido")
+	}
+	if err != nil {
+		return nil, err
 	}
 	return &pb.Response{Result: res}, nil
 }
