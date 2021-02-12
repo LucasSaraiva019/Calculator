@@ -4,6 +4,7 @@ go 1.15
 
 require (
 	github.com/golang/protobuf v1.4.3
+	github.com/google/go-cmp v0.5.4
 	github.com/ktr0731/evans v0.9.2 // indirect
 	github.com/onsi/ginkgo v1.15.0
 	github.com/onsi/gomega v1.10.5
