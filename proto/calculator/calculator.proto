@@ -3,6 +3,8 @@ syntax = "proto3";
 
 package calculator;
 
+import "google/api/annotations.proto";
+
 message Request {
   float numberOne = 1;
   float numberTwo = 2;
@@ -21,5 +23,10 @@ message Response {
 }
 
 service CalculatorService {
-  rpc Calculate(Request) returns (Response) {}
+  rpc Calculate(Request) returns (Response) {
+    option (google.api.http) = {
+      post: "/v1/calculator"
+      body: "*"
+    };
+  }
 }

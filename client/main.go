@@ -63,6 +63,9 @@ func main() {
 	}
 
 	res, err := c.Calculate(context.Background(), request)
+	if res != nil {
+		log.Println(res.Result)
+	}
+	log.Println(err)
 
-	log.Println(res.Result)
 }

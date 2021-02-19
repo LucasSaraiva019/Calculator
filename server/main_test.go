@@ -4,8 +4,8 @@ import (
 	"context"
 	"math"
 
-	pb "example.com/calculadora/calculator"
-	main "example.com/calculadora/server"
+	pb "github.com/lucas.saraiva019/calculadora/proto/calculator"
+	main "github.com/lucas.saraiva019/calculadora/server"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -19,7 +19,7 @@ func ComparerFloat(x, y float64) bool {
 }
 
 var _ = Describe("Main", func() {
-	calculator := main.Math{}
+	calculator := main.Server{}
 	Describe("Test the func of calculator", func() {
 		Context("Operator Sum", func() {
 			It("Sum with two integer numbers", func() {
