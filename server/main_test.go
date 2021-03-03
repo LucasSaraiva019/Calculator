@@ -4,8 +4,8 @@ import (
 	"context"
 	"math"
 
-	pb "example.com/calculadora/calculator"
-	main "example.com/calculadora/server"
+	pb "github.com/lucas.saraiva019/calculadora/proto/calculator"
+	main "github.com/lucas.saraiva019/calculadora/server"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -19,7 +19,7 @@ func ComparerFloat(x, y float64) bool {
 }
 
 var _ = Describe("Main", func() {
-	calculator := main.Math{}
+	calculator := main.Server{}
 	Describe("Test the func of calculator", func() {
 		Context("Operator Sum", func() {
 			It("Sum with two integer numbers", func() {
@@ -177,7 +177,7 @@ var _ = Describe("Main", func() {
 				Expect(ComparerFloat(float64(response.Result), 3.45)).To(BeTrue())
 			})
 		})
-		FContext("Operator Div", func() {
+		Context("Operator Div", func() {
 			It("Div with two integer numbers", func() {
 				request := &pb.Request{
 					NumberOne: 4,
@@ -198,16 +198,16 @@ var _ = Describe("Main", func() {
 				Expect(err).To(BeNil())
 				Expect(ComparerFloat(float64(response.Result), 1.95652)).To(BeTrue())
 			})
-			// TODO terminar esse bendito teste
-			FIt("Div with second number is zero numbers", func() {
+			It("Div with second number is zero numbers", func() {
 				request := &pb.Request{
 					NumberOne: 10,
 					NumberTwo: 0,
 					Operation: pb.OperatorType_DIVISION,
 				}
 				response, err := calculator.Calculate(context.Background(), request)
-				Expect(err).To(BeNil())
-				Expect(response.Result).To()
+				Expect(err).NotTo(BeNil())
+				Expect(err.Error()).To(Equal("Não é possivel dividir por Zero"))
+				Expect(response).To(BeNil())
 			})
 			It("Div with two integer negative numbers", func() {
 				request := &pb.Request{

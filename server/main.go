@@ -5,25 +5,25 @@ import (
 	"errors"
 	"log"
 	"net"
+	"net/http"
 
-	pb "example.com/calculadora/calculator"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	pb "github.com/lucas.saraiva019/calculadora/proto/calculator"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
-)
-
-const (
-	port = ":50051"
 )
 
 //Math ...
-type Math struct {
+type Server struct {
 	pb.UnsafeCalculatorServiceServer
 }
 
-//(c *Math) = Receiver
+func newServer() *Server {
+	return &Server{}
+}
+
+//(s *server) = Receiver
 //Calculate2 ...
-func (c *Math) Calculate(ctx context.Context, in *pb.Request) (*pb.Response, error) {
-	var errorDivisorZero = errors.New("Não é possivel dividir por Zero")
+func (s *Server) Calculate(ctx context.Context, in *pb.Request) (*pb.Response, error) {
 	var res float32
 	var err error
 
@@ -36,7 +36,7 @@ func (c *Math) Calculate(ctx context.Context, in *pb.Request) (*pb.Response, err
 		res = in.NumberOne * in.NumberTwo
 	case pb.OperatorType_DIVISION:
 		if in.NumberTwo == 0 {
-			err = errorDivisorZero
+			err = errors.New("Não é possivel dividir por Zero")
 		} else {
 			res = in.NumberOne / in.NumberTwo
 		}
@@ -50,14 +50,47 @@ func (c *Math) Calculate(ctx context.Context, in *pb.Request) (*pb.Response, err
 }
 
 func main() {
-	lis, err := net.Listen("tcp", port)
+	// Create a listener on TCP port
+	lis, err := net.Listen("tcp", ":8080")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
+
+	// Create a gRPC server object
 	s := grpc.NewServer()
-	pb.RegisterCalculatorServiceServer(s, &Math{})
-	reflection.Register(s)
-	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+	// Attach the Greeter service to the server
+	pb.RegisterCalculatorServiceServer(s, &Server{})
+
+	//Serve gRPC server
+	log.Println("Serving gRPC on 0.0.0.0:8080")
+	go func() {
+		log.Fatal(s.Serve(lis))
+	}()
+
+	// Create a client connection to the gRPC server we just started
+	// This is where the gRPC-Gateway proxies the requests
+	conn, err := grpc.DialContext(
+		context.Background(),
+		"0.0.0.0:8080",
+		grpc.WithBlock(),
+		grpc.WithInsecure(),
+	)
+	if err != nil {
+		log.Fatalln("Failed to dial server:", err)
 	}
+
+	gwmux := runtime.NewServeMux()
+
+	//Register Calculator
+	err = pb.RegisterCalculatorServiceHandler(context.Background(), gwmux, conn)
+	if err != nil {
+		log.Fatalln("Failed to register gateway:", err)
+	}
+	gwServer := &http.Server{
+		Addr:    ":8090",
+		Handler: gwmux,
+	}
+	log.Println("Serving gRPC-Gateway on http://0.0.0.0:8090")
+	log.Fatalln(gwServer.ListenAndServe())
+
 }
