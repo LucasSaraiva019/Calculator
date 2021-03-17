@@ -6,8 +6,8 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.2.0
 	github.com/nxadm/tail v1.4.8 // indirect
-	github.com/onsi/ginkgo v1.15.0
-	github.com/onsi/gomega v1.10.5
+	github.com/onsi/ginkgo v1.15.1
+	github.com/onsi/gomega v1.11.0
 	golang.org/x/sys v0.0.0-20210219172841-57ea560cfca1 // indirect
 	golang.org/x/tools v0.1.0 // indirect
 	google.golang.org/genproto v0.0.0-20210207032614-bba0dbe2a9ea
